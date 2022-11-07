@@ -20,9 +20,10 @@ export const deposit = async (req, res) => {
         amount,
       });
     });
-    res.status(200).send("Deposit successful");
+    return res.status(200).send("Deposit successful");
   } catch (error) {
     console.log("cannot insert amount : ", error);
+    return res.sendStatus(500);
   }
 };
 
@@ -34,10 +35,12 @@ export const transfer = async (req, res) => {
         `UPDATE accounts SET balance=balance-${amount} WHERE account_number=${senderAccountNumber}`,
         { transaction: t }
       );
+      console.log({ debitResults, debitMetadata });
       const [creditResults, creditMetadata] = await sequelize.query(
         `UPDATE accounts SET balance=balance+${amount} WHERE account_number=${receiverAccountNumber}`,
         { transaction: t }
       );
+      console.log({ creditResults, creditMetadata });
       const userTransaction = await Transaction.create(
         {
           debit: senderAccountNumber,
@@ -51,6 +54,11 @@ export const transfer = async (req, res) => {
     // res.status(200).send("Transfer successful");
     res.send(result);
   } catch (error) {
-    console.log("Cannot transfer money : ", error);
+    if (error.index === "transactions_debit_fkey") {
+      return res.status(404).send("sender account does not exits");
+    } else if (error.index === "transactions_credit_fkey") {
+      return res.status(404).send("receiver account does not exits");
+    }
+    res.sendStatus(500);
   }
 };

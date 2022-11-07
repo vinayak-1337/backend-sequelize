@@ -24,7 +24,7 @@ export const create = async (req, res) => {
     return res.status(200).send(result);
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
-      res.status(400).send("username already exists");
+      return res.status(400).send("username already exists");
       console.log("Username exists");
     }
     return res.sendStatus(500);
