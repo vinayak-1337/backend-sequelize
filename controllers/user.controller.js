@@ -16,9 +16,12 @@ export const create = async (req, res) => {
       user_id: result.id,
     });
     // res.send(`User created : ${JSON.stringify(result)}`);
-    res.send(result);
+    res.status(200).send(result);
   } catch (error) {
-    console.log("Cannot create user : ", error);
+    if (error.name === "SequelizeUniqueConstraintError") {
+      res.status(400).send("username already exists");
+      console.log("Username exists");
+    }
   }
 };
 
