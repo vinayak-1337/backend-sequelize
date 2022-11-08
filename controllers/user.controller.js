@@ -33,7 +33,6 @@ export const create = async (req, res) => {
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
-  const userData = {};
   try {
     const userResult = await User.findOne({
       where: {
@@ -68,4 +67,10 @@ export const login = async (req, res) => {
   } catch (error) {
     return res.sendStatus(500);
   }
+};
+
+export const getUser = async (req, res) => {
+  const { id, name, username, accountNumber, age, balance } = req.user;
+  console.log({ id, name, username, age, accountNumber, balance });
+  res.status(200).send({ id, name, username, age, accountNumber, balance });
 };

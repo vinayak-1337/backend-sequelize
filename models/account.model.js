@@ -16,7 +16,7 @@ const Account = sequelize.define(
       defaultValue: 1000,
     },
   },
-  { initialAutoIncrement: 10101 }
+  { initialAutoIncrement: 1000 }
 );
 Account.belongsTo(User, {
   foreignKey: {
