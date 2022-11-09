@@ -2,6 +2,8 @@ import Transaction from "../models/transaction.model.js";
 import sequelize from "../models/index.js";
 import { QueryTypes } from "sequelize";
 
+export const balance = async (req, res) => {};
+
 export const deposit = async (req, res) => {
   const { accountNumber, amount } = req.body;
   try {
@@ -14,13 +16,12 @@ export const deposit = async (req, res) => {
         }
       );
       const userTransaction = await Transaction.create({
-        credit: accountNumber,
+        to: accountNumber,
         amount,
       });
     });
     return res.status(200).send("Deposit successful");
   } catch (error) {
-    console.log("cannot insert amount : ", error);
     return res.sendStatus(500);
   }
 };
@@ -33,16 +34,14 @@ export const transfer = async (req, res) => {
         `UPDATE accounts SET balance=balance-${amount} WHERE account_number=${senderAccountNumber}`,
         { transaction: t }
       );
-      console.log({ debitResults, debitMetadata });
       const [creditResults, creditMetadata] = await sequelize.query(
         `UPDATE accounts SET balance=balance+${amount} WHERE account_number=${receiverAccountNumber}`,
         { transaction: t }
       );
-      console.log({ creditResults, creditMetadata });
       const userTransaction = await Transaction.create(
         {
-          debit: senderAccountNumber,
-          credit: receiverAccountNumber,
+          from: senderAccountNumber,
+          to: receiverAccountNumber,
           amount,
         },
         { transaction: t }

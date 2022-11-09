@@ -8,18 +8,18 @@ export const transactionHistory = async (req, res) => {
     const result = await Transaction.findAll({
       attributes: [
         ["id", "transactionId"],
-        "credit",
-        "debit",
+        "to",
+        "from",
         "amount",
         ["createdAt", "time"],
       ],
       where: {
-        [Op.or]: [{ credit: accountNumber }, { debit: accountNumber }],
+        [Op.or]: [{ to: accountNumber }, { from: accountNumber }],
       },
       order: [["id", "DESC"]],
     });
     return res.send(result);
   } catch (error) {
-    console.log("cannot get transaction history : ", error);
+    res.sendStatus(500);
   }
 };

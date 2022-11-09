@@ -16,7 +16,6 @@ export const create = async (req, res) => {
       username,
       password: hashedPassword,
     });
-    console.log(result.id);
     const result2 = await Account.create({
       user_id: result.id,
     });
@@ -25,7 +24,6 @@ export const create = async (req, res) => {
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
       return res.status(400).send("username already exists");
-      console.log("Username exists");
     }
     return res.sendStatus(500);
   }
@@ -71,6 +69,5 @@ export const login = async (req, res) => {
 
 export const getUser = async (req, res) => {
   const { id, name, username, accountNumber, age, balance } = req.user;
-  console.log({ id, name, username, age, accountNumber, balance });
   res.status(200).send({ id, name, username, age, accountNumber, balance });
 };

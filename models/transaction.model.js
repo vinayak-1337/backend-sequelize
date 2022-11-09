@@ -4,14 +4,14 @@ import sequelize from "./index.js";
 import User from "./user.model.js";
 
 const Transaction = sequelize.define("transactions", {
-  debit: {
+  from: {
     type: DataTypes.INTEGER,
     references: {
       model: Account,
       key: "account_number",
     },
   },
-  credit: {
+  to: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -26,10 +26,10 @@ const Transaction = sequelize.define("transactions", {
 });
 
 Account.hasMany(Transaction, {
-  foreignKey: "debit",
+  foreignKey: "from",
 });
 Account.hasMany(Transaction, {
-  foreignKey: "credit",
+  foreignKey: "to",
 });
 
 export default Transaction;
