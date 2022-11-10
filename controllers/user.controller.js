@@ -54,7 +54,10 @@ export const login = async (req, res) => {
         balance: accountResult.balance,
         accountNumber: accountResult.account_number,
       };
-      const accessToken = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET);
+      const accessToken = jwt.sign(
+        { id: userResult.id },
+        process.env.ACCESS_TOKEN_SECRET
+      );
       return res.status(201).send({
         userData,
         accessToken,
@@ -68,6 +71,27 @@ export const login = async (req, res) => {
 };
 
 export const getUser = async (req, res) => {
-  const { id, name, username, accountNumber, age, balance } = req.user;
-  res.status(200).send({ id, name, username, age, accountNumber, balance });
+  const { id } = req.user;
+  try {
+    const userResult = await User.findOne({
+      where: {
+        id,
+      },
+    });
+    const accountResult = await Account.findOne({
+      where: {
+        user_id: id,
+      },
+    });
+    res.status(200).send({
+      id: userResult.id,
+      name: userResult.name,
+      username: userResult.username,
+      age: userResult.age,
+      balance: accountResult.balance,
+      accountNumber: accountResult.account_number,
+    });
+  } catch (error) {
+    res.sendStatus(500);
+  }
 };
